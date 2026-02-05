@@ -1,201 +1,119 @@
-# KarmaBank
+# KarmaBank 💰
 
-A hackathon-ready **KarmaBank** that allows AI agents to borrow USDC based on their **Moltbook karma** reputation.
+**AI agents borrow USDC based on their Moltbook karma score**
 
-This project includes:
-- A **credit scoring engine** (`src/scoring.ts`) that calculates a 0–100 credit score
-- A **CLI tool** (`credit`) built with `commander`
-- A lightweight **ledger** (file-backed JSON store) for demo/testing
-
-> Status: CLI + docs are scaffolded for Day 2. Circle wallet + real Moltbook integration can be plugged in next.
-
----
-
-## Features
-
-- **Register** an agent by Moltbook name
-- **Check** credit score, tier, max borrow, and score breakdown
-- **Borrow** USDC (demo ledger-backed issuance)
-- **Repay** USDC loans
-- **History** shows loan records
-- **List** shows all registered agents
+KarmaBank is a credit system that allows AI agents to borrow USDC on testnet based on their Moltbook reputation. Higher karma = higher credit tier = more borrowing power.
 
 ---
 
 ## Installation
 
+### Option 1: From ClawHub (Recommended)
 ```bash
-cd agent-credit-system
+# Install skill
+clawhub install karmabank
+
+# Enter skill directory
+cd ~/.openclaw/workspace/skills/karmabank
+
+# Install dependencies
 npm install
-```
 
-### Environment Variables
-
-Create a `.env` file (optional):
-
-```bash
-MOLTBOOK_API_KEY=your_key_here
-MOLTBOOK_API_BASE=https://www.moltbook.com/api/v1
-CREDIT_LEDGER_PATH=.credit-ledger.json
-```
-
-> If `MOLTBOOK_API_KEY` is not set, the CLI will fall back to demo/mock profiles for scoring.
-
----
-
-## Usage
-
-### Run in Dev Mode
-
-```bash
-npm run dev -- --help
-```
-
-### Build + Run
-
-```bash
+# Build
 npm run build
-npm start -- --help
+```
+
+### Option 2: From Source
+```bash
+git clone https://github.com/abdhilabs/karmabank.git
+cd karmabank
+npm install
+npm run build
 ```
 
 ---
 
-## CLI Commands
-
-### Register
+## Quick Start
 
 ```bash
-credit register <moltbookName>
+# Register your agent
+karmabank register @yourAgentName
+
+# Check credit score
+karmabank check @yourAgentName
+
+# Borrow USDC
+karmabank borrow @yourAgentName 50
 ```
 
-Example:
-```bash
-credit register myagent
-```
+---
 
-### Check
+## Commands
 
-```bash
-credit check <moltbookName> [--verbose]
-```
-
-Example:
-```bash
-credit check myagent --verbose
-```
-
-### Borrow
-
-```bash
-credit borrow <moltbookName> <amount> [--yes]
-```
-
-Example:
-```bash
-credit borrow myagent 100 --yes
-```
-
-### Repay
-
-```bash
-credit repay <moltbookName> <amount> [--yes]
-```
-
-Example:
-```bash
-credit repay myagent 50 --yes
-```
-
-### History
-
-```bash
-credit history <moltbookName> [--limit 10]
-```
-
-Example:
-```bash
-credit history myagent --limit 5
-```
-
-### List
-
-```bash
-credit list [--verbose]
-```
+| Command | Description |
+|---------|-------------|
+| `register <name>` | Register agent with KarmaBank |
+| `check <name>` | Show credit score and limits |
+| `borrow <name> <amount>` | Borrow USDC |
+| `repay <name> <amount>` | Repay USDC loan |
+| `history <name>` | Show transaction history |
+| `list` | List all registered agents |
+| `wallet create <name>` | Create Circle wallet |
 
 ---
 
 ## Credit Tiers
 
-| Tier      | Score  | Max Borrow | Notes |
-|-----------|--------|------------|------|
-| Blocked   | 0      | 0 USDC     | Unclaimed or blocked |
-| Bronze    | 1–20   | 50 USDC    | Entry tier |
-| Silver    | 21–40  | 150 USDC   | Moderate activity |
-| Gold      | 41–60  | 300 USDC   | Strong presence |
-| Platinum  | 61–80  | 600 USDC   | Verified + active |
-| Diamond   | 81–100 | 1000 USDC  | Top reputation |
+| Tier | Max Borrow |
+|------|------------|
+| Bronze | 50 USDC |
+| Silver | 150 USDC |
+| Gold | 300 USDC |
+| Platinum | 600 USDC |
+| Diamond | 1000 USDC |
 
-Loan terms:
+---
+
+## Configuration
+
+```bash
+# Moltbook API (optional for mock mode)
+MOLTBOOK_API_KEY=your_key
+
+# Circle API (for real wallet)
+CIRCLE_API_KEY=your_key
+CIRCLE_ENTITY_SECRET=your_secret
+```
+
+---
+
+## Loan Terms
+
 - **Interest:** 0%
 - **Term:** 14 days
+- **Grace Period:** 3 days
+- **Late Fee:** 10%
 
 ---
 
-## Architecture Diagram (Text)
+## Scoring System
 
-```
-           ┌──────────────────────┐
-           │      Moltbook API     │
-           │  (agent karma stats)  │
-           └──────────┬───────────┘
-                      │
-                      ▼
-           ┌──────────────────────┐
-           │    Scoring Engine     │
-           │   src/scoring.ts      │
-           └──────────┬───────────┘
-                      │ CreditScore
-                      ▼
-┌───────────────┐   ┌──────────────────────┐
-│  CLI (credit) │──►│ Ledger Service        │
-│ src/cli.ts     │   │ .credit-ledger.json  │
-└───────────────┘   └──────────┬───────────┘
-                               │
-                               ▼
-                      ┌──────────────────┐
-                      │ Loans + Agents   │
-                      │ Registry + State │
-                      └──────────────────┘
-```
+Credit score based on:
+- Moltbook Karma (40%)
+- Account Age (20%)
+- Activity Diversity (15%)
+- X Verification (10%)
+- Follower Count (15%)
 
 ---
 
-## Development
+## Resources
 
-### Tests
-
-```bash
-npm test
-```
-
-### Lint
-
-```bash
-npm run lint
-```
+- **GitHub:** https://github.com/abdhilabs/karmabank
+- **Moltbook:** https://moltbook.com
+- **Circle Console:** https://console.circle.com
+- **Hackathon:** https://moltbook.com/m/usdc
 
 ---
 
-## Contributing
-
-1. Fork / branch from `main`
-2. Keep PRs small and focused
-3. Add tests for scoring/ledger changes
-4. Run `npm test` before submitting
-
----
-
-## License
-
-ISC
+**Built for the USDC Agentic Hackathon** 💵🏦
