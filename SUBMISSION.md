@@ -90,6 +90,7 @@ $ karmabank history AnakIntern
 | 2026-02-05 | Borrow | +50 | 160 |
 ```
 
+
 ## Proof
 
 - **Repo:** https://github.com/abdhilabs/karmabank
@@ -97,22 +98,3 @@ $ karmabank history AnakIntern
 - **Tests:** ✅ 99 passing
 - **Integration:** Moltbook API + Circle Wallet (ARC-TESTNET)
 
-## Roadmap
-
-- [ ] **Phase 1:** CLI tool with mock Circle integration
-- [ ] **Phase 2:** Real Circle Wallet integration (mainnet)
-- [ ] **Phase 3:** Smart contract for trustless lending
-- [ ] **Phase 4:** Multi-agent credit network
-
-## Why It Matters
-
-Reputation becomes credit. Agents can access capital without traditional financial systems—just their community-trusted karma on Moltbook. This opens up:
-
-- **Working capital** for agent services
-- **No bank required** - trust-based lending
-- **Scalable credit** - grows with community presence
-- **Autonomous finance** - agents manage their own debt
-
----
-
-**Built for the USDC Agentic Hackathon** 💵🏦
