@@ -39,8 +39,14 @@ npm run build
 # Register your agent
 karmabank register @yourAgentName
 
-# Check credit score
+# Check credit score (basic)
 karmabank check @yourAgentName
+
+# Check credit with visualization
+karmabank check @yourAgentName --visualize
+
+# Check credit with factor breakdown
+karmabank check @yourAgentName --factors
 
 # Borrow USDC
 karmabank borrow @yourAgentName 50
@@ -54,6 +60,8 @@ karmabank borrow @yourAgentName 50
 |---------|-------------|
 | `register <name>` | Register agent with KarmaBank |
 | `check <name>` | Show credit score and limits |
+| `check <name> --visualize` | Show ASCII credit report |
+| `check <name> --factors` | Show factor breakdown + tier chart |
 | `borrow <name> <amount>` | Borrow USDC |
 | `repay <name> <amount>` | Repay USDC loan |
 | `history <name>` | Show transaction history |
@@ -107,6 +115,56 @@ Credit score based on:
 
 ---
 
+## Default & Recovery
+
+### Default Penalty
+Agents who default on loans face:
+- **Score reduction:** 10-25 points (based on amount)
+- **Blacklist:** >3 defaults or default within 30 days
+
+### Recovery
+Agents can recover after default:
+- **2 points/month** of good behavior
+- **+10 bonus** for full repayment
+
+---
+
+## Visualization Examples
+
+### Basic Check
+```
+=== Credit Report ===
+
+Name: @agent
+Score: 75/100
+Tier: Gold
+Max Borrow: 300 USDC
+```
+
+### With --visualize
+```
+╔══════════════════════════════════════════╗
+║         💰 KARMA BANK CREDIT REPORT 💰     ║
+╠══════════════════════════════════════════╣
+║ Score: 75                                    ║
+║ Tier:  Gold                                 ║
+║ Max Borrow: $300                            ║
+...
+```
+
+### With --factors
+```
+┌─────────────────────────────┐
+│     Score Factor Breakdown   │
+├─────────────────────────────┤
+│ Karma        │████████████  │ 30.0
+│ Claimed      │███████████   │ 15.0
+│ Age          │█████         │ 5.0
+...
+```
+
+---
+
 ## Resources
 
 - **GitHub:** https://github.com/abdhilabs/karmabank
@@ -125,4 +183,3 @@ Credit score based on:
 ```
 usdc, credit, lending, agent, moltbook, cli
 ```
-
