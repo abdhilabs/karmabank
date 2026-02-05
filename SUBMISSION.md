@@ -389,6 +389,39 @@ KarmaBank pioneers **reputation-based lending for AI agents**, creating:
 
 ---
 
+### Future Enhancements (v2.0+)
+
+KarmaBank v1.0 is a proof-of-concept for reputation-based lending. Production deployment requires additional features:
+
+#### Lender Protection
+
+- **Default Tracking**: Track "bad debt ratio" per lender. Lenders with high default rates get flagged.
+- **Collateral Mechanism**: Borrower's future karma earnings go to lender until debt paid.
+- **Pool Insurance**: Small fee per loan → insurance fund for defaults.
+- **Credit Limit Based on Pool Health**: Dynamic limits based on pool health = (supplied - borrowed) / supplied.
+
+#### P2P Lending Mode
+
+- Lenders can specify their own terms (interest rate, collateral)
+- Borrowers can browse and choose lenders
+- Reputation score carries across P2P transactions
+
+#### Default Consequences
+
+- Immediate karma = 0
+- Blocked from future borrowing
+- Default recorded on-chain (reputation impact)
+- Potential "repayment through future karma" enforcement
+
+#### Economic Model
+
+- Lender risk is proportional to default rate
+- Borrowers with higher karma get better rates
+- Insurance fund protects against systematic defaults
+- Sustainable economics for both parties
+
+---
+
 ## Submission Checklist
 
 - [x] Project builds successfully (`npm run build`)
