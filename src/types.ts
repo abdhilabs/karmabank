@@ -250,3 +250,136 @@ export const DEFAULT_SCORING_CONFIG: ScoringConfig = {
   emaAlpha: 0.3,
   scoreScale: 100,
 };
+
+// ============================================================================
+// SECURITY TYPES - Address JasperEXO's Feedback
+// ============================================================================
+
+/**
+ * Security configuration for sybil attack prevention
+ */
+export interface SecurityConfig {
+  /** Minimum account age in days before borrowing */
+  minAccountAgeDays: number;
+  /** Minimum karma velocity (karma gained per day) */
+  minKarmaVelocity: number;
+  /** Maximum loans per day */
+  maxLoansPerDay: number;
+  /** Cool-down period between loans in hours */
+  loanCooldownHours: number;
+  /** Maximum loan frequency per week */
+  maxLoansPerWeek: number;
+  /** Minimum activity threshold in days */
+  minActivityDays: number;
+  /** Maximum referrals per agent */
+  maxReferralsPerAgent: number;
+}
+
+/**
+ * Security check result
+ */
+export interface SecurityCheckResult {
+  /** Whether the check passed */
+  passed: boolean;
+  /** Reason for failure if any */
+  reason?: string;
+  /** Risk level */
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  /** Recommendations */
+  recommendations: string[];
+}
+
+/**
+ * Agent security profile
+ */
+export interface AgentSecurityProfile {
+  /** Agent ID */
+  agentId: string;
+  /** Bound wallet address (for sybil prevention) */
+  walletAddress?: string;
+  /** Account creation timestamp */
+  accountCreatedAt: number;
+  /** First activity timestamp */
+  firstActivityAt: number;
+  /** Karma velocity (karma per day) */
+  karmaVelocity: number;
+  /** Total loans taken */
+  totalLoans: number;
+  /** Loans in last 24 hours */
+  loansLast24h: number;
+  /** Loans in last 7 days */
+  loansLast7Days: number;
+  /** Last loan timestamp */
+  lastLoanAt?: number;
+  /** Referrals made */
+  referralsMade: number;
+  /** Risk score (0-100) */
+  riskScore: number;
+  /** Whether agent is flagged for review */
+  isFlagged: boolean;
+  /** Flag reason */
+  flagReason?: string;
+}
+
+/**
+ * Security violation types
+ */
+export enum SecurityViolation {
+  SYBIL_DETECTED = 'sybil_detected',
+  VELOCITY_ANOMALY = 'velocity_anomaly',
+  LOAN_FLIPPING = 'loan_flipping',
+  REFERRAL_SPAM = 'referral_spam',
+  WALLET_MISMATCH = 'wallet_mismatch',
+  ACCOUNT_TOO_NEW = 'account_too_new',
+}
+
+/**
+ * Security violation record
+ */
+export interface SecurityViolationRecord {
+  /** Violation ID */
+  id: string;
+  /** Agent ID */
+  agentId: string;
+  /** Violation type */
+  type: SecurityViolation;
+  /** Timestamp */
+  timestamp: number;
+  /** Details */
+  details: string;
+  /** Resolution status */
+  resolved: boolean;
+  /** Resolution notes */
+  resolutionNotes?: string;
+}
+
+/**
+ * Default security configuration
+ */
+export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
+  minAccountAgeDays: 7,        // Account must be 7 days old
+  minKarmaVelocity: 1,        // At least 1 karma per day
+  maxLoansPerDay: 3,          // Max 3 loans per day
+  loanCooldownHours: 24,      // 24 hours between loans
+  maxLoansPerWeek: 10,        // Max 10 loans per week
+  minActivityDays: 3,         // At least 3 days of activity
+  maxReferralsPerAgent: 5,    // Max 5 referrals
+};
+
+/**
+ * Wallet binding record for sybil prevention
+ */
+export interface WalletBinding {
+  /** Agent ID */
+  agentId: string;
+  /** Wallet address */
+  walletAddress: string;
+  /** Chain ID */
+  chainId: string;
+  /** Binding timestamp */
+  boundAt: number;
+  /** Whether verified on-chain */
+  isVerified: boolean;
+  /** Transaction hash of binding */
+  bindingTxHash?: string;
+}
