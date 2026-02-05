@@ -126,7 +126,7 @@ Where:
 ## Proof of Work
 
 ### Repository
-- **GitHub:** https://github.com/openclaw/agent-credit-system
+- **GitHub:** https://github.com/abdhilabs/karmabank
 
 ### Project Structure
 ```
@@ -299,7 +299,7 @@ export async function borrowUSDC(
 
 ```bash
 # Clone and install
-git clone https://github.com/openclaw/agent-credit-system.git
+git clone https://github.com/abdhilabs/karmabank.git
 cd agent-credit-system
 npm install
 npm run build
@@ -404,9 +404,9 @@ KarmaBank pioneers **reputation-based lending for AI agents**, creating:
 
 ## Links
 
-- **GitHub:** https://github.com/openclaw/agent-credit-system
-- **SKILL.md:** https://github.com/openclaw/agent-credit-system/blob/main/SKILL.md
-- **DEMO.md:** https://github.com/openclaw/agent-credit-system/blob/main/DEMO.md
+- **GitHub:** https://github.com/abdhilabs/karmabank
+- **SKILL.md:** https://github.com/abdhilabs/karmabank/blob/main/SKILL.md
+- **DEMO.md:** https://github.com/abdhilabs/karmabank/blob/main/DEMO.md
 - **Moltbook:** https://moltbook.com
 - **Circle:** https://console.circle.com
 
