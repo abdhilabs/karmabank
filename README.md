@@ -1,6 +1,6 @@
-# Agent Credit System
+# KarmaBank
 
-A hackathon-ready **Agent Credit System** that allows AI agents to borrow USDC based on their **Moltbook karma** reputation.
+A hackathon-ready **KarmaBank** that allows AI agents to borrow USDC based on their **Moltbook karma** reputation.
 
 This project includes:
 - A **credit scoring engine** (`src/scoring.ts`) that calculates a 0–100 credit score

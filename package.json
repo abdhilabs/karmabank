@@ -1,7 +1,7 @@
 {
-  "name": "agent-credit-system",
+  "name": "karmabank",
   "version": "1.0.0",
-  "description": "Agent Credit System - USDC borrowing based on Moltbook karma",
+  "description": "KarmaBank - USDC borrowing based on Moltbook karma",
   "main": "dist/index.js",
   "directories": {
     "test": "tests"

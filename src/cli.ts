@@ -1,7 +1,7 @@
 /**
- * Agent Credit System CLI Entry Point
+ * KarmaBank CLI Entry Point
  * 
- * A command-line interface for the Agent Credit System that enables AI agents
+ * A command-line interface for the KarmaBank that enables AI agents
  * to borrow USDC based on their Moltbook karma reputation.
  * 
  * Usage:
@@ -32,7 +32,7 @@ const program = new Command();
 
 program
   .name('credit')
-  .description('Agent Credit System - USDC borrowing based on Moltbook karma')
+  .description('KarmaBank - USDC borrowing based on Moltbook karma')
   .version('1.0.0')
   .helpOption('-h, --help', 'Display help information')
   .addHelpText('after', formatHelp())
