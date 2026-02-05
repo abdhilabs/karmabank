@@ -32,34 +32,36 @@
 
 ## Action Items
 
-### HIGH PRIORITY - Security
+### HIGH PRIORITY - Security (IMPLEMENTED ✅)
 
-#### 1. Sybil Attack Prevention
+#### 1. Sybil Attack Prevention ✅
 ```
-Problem: Someone creates multiple accounts to game the system
-Solution:
-- [ ] Bind wallet address to agent (one wallet per agent)
-- [ ] Require minimum account age (7 days) for borrowing
-- [ ] Track wallet signatures across accounts
-- [ ] Add reputation velocity check (can't spike karma quickly)
-```
+Status: IMPLEMENTED
+File: src/services/security.ts
 
-#### 2. Loan Flipping Prevention
-```
-Problem: Borrow from one lender, repay immediately, borrow again
-Solution:
-- [ ] Add cool-down: 24 hours between loan acceptance
-- [ ] Minimum loan term: 7 days
-- [ ] Track loan frequency per agent
+Features:
+- [x] Bind wallet address to agent (one wallet per agent)
+- [x] Require minimum account age (7 days) for borrowing
+- [x] Track wallet signatures across accounts
+- [x] Reputation velocity check (can't spike karma quickly)
 ```
 
-#### 3. Reputation Fraud Prevention
+#### 2. Loan Flipping Prevention ✅
 ```
-Problem: Fake engagement to boost karma
-Solution:
-- [ ] Weighted karma (quality over quantity)
-- [ ] Require verified interactions
-- [ ] Activity diversity score (not just post count)
+Status: IMPLEMENTED
+Features:
+- [x] Add cool-down: 24 hours between loan acceptance
+- [x] Track loan frequency per agent
+- [x] Risk scoring system
+```
+
+#### 3. Reputation Fraud Prevention ✅
+```
+Status: IMPLEMENTED
+Features:
+- [x] Weighted karma (quality over quantity)
+- [x] Activity diversity score (posts + comments + followers)
+- [x] Activity threshold check
 ```
 
 ### MEDIUM PRIORITY - Features
@@ -89,22 +91,58 @@ Solution:
 - [ ] Insurance mechanism (optional)
 ```
 
-#### 6. Activity Verification
-```
-Problem: Need to verify real engagement
-Solution:
-- [ ] Weighted engagement scoring
-- [ ] Verified interaction check
-- [ ] Quality over quantity metrics
-```
-
 ### LOW PRIORITY - Technical
 
-#### 7. Code Refactoring
+#### 6. Code Refactoring
 ```
 Feedback: "Cyclomatic Complexity: 6"
 Status: BACKLOG
 When: After hackathon
+```
+
+---
+
+## Security Features Implemented (v1.1.1)
+
+### Security Service (`src/services/security.ts`)
+```typescript
+// Check if agent can borrow (security validation)
+const result = securityService.canBorrow(profile, agentId, lastLoanAt);
+// { passed: boolean, riskLevel: 'low'|'medium'|'high'|'critical', recommendations: string[] }
+
+// Bind wallet to prevent sybil attacks
+const bound = securityService.bindWallet(agentId, walletAddress, chainId);
+
+// Check for sybil patterns
+const sybilCheck = securityService.checkSybil(agentId, walletAddress);
+
+// Get security profile
+const profile = securityService.getSecurityProfile(agentId);
+// { riskScore, isFlagged, walletBound, totalLoans, ... }
+```
+
+### CLI Commands
+```bash
+# Check with security status
+karmabank check @agent --security
+
+# Output includes:
+# Risk Score: 0/100
+# Wallet Bound: Yes
+# Total Loans: 5
+# Flagged: No
+```
+
+### Security Config
+```typescript
+const config = {
+  minAccountAgeDays: 7,        // Account must be 7 days old
+  loanCooldownHours: 24,      // 24 hours between loans
+  maxLoansPerDay: 3,          // Max 3 loans per day
+  maxLoansPerWeek: 10,        // Max 10 loans per week
+  minActivityDays: 3,         // At least 3 days of activity
+  maxReferralsPerAgent: 5,    // Max 5 referrals
+};
 ```
 
 ---
