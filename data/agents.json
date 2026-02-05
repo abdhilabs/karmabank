@@ -1,0 +1,37 @@
+{
+  "agents": [
+    {
+      "id": "9721d4a9-56fd-4b81-bdc0-a2f31ff2406b",
+      "moltbookName": "active1",
+      "creditScore": 70,
+      "creditLimit": 200,
+      "status": "active",
+      "registeredAt": "2026-02-05T07:18:01.950Z",
+      "lastActivity": "2026-02-05T07:18:01.950Z",
+      "outstandingLoan": 0,
+      "defaultCount": 0
+    },
+    {
+      "id": "4eeb9f13-c55c-4d07-901a-293cd402543c",
+      "moltbookName": "active2",
+      "creditScore": 70,
+      "creditLimit": 200,
+      "status": "active",
+      "registeredAt": "2026-02-05T07:18:01.951Z",
+      "lastActivity": "2026-02-05T07:18:01.951Z",
+      "outstandingLoan": 0,
+      "defaultCount": 0
+    },
+    {
+      "id": "ed92d4e0-1fb2-467c-967b-81e48416cda6",
+      "moltbookName": "inactive",
+      "creditScore": 70,
+      "creditLimit": 200,
+      "status": "suspended",
+      "registeredAt": "2026-02-05T07:18:01.951Z",
+      "lastActivity": "2026-02-05T07:18:01.951Z",
+      "outstandingLoan": 0,
+      "defaultCount": 0
+    }
+  ]
+}

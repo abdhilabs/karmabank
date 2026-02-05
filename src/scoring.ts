@@ -557,5 +557,239 @@ export function createLoan(
   };
 }
 
+/**
+ * Default penalty for loan default
+ * Reduces credit score when agent defaults on a loan
+ * 
+ * @param currentScore - Current credit score
+ * @param defaultCount - Number of defaults
+ * @param loanAmount - Amount of defaulted loan
+ * @returns New score after penalty
+ */
+export function applyDefaultPenalty(
+  currentScore: number,
+  defaultCount: number,
+  loanAmount: number
+): number {
+  // Base penalty for first default
+  let penalty = 10;
+  
+  // Additional penalty based on default count
+  penalty += defaultCount * 5;
+  
+  // Additional penalty based on loan amount (capped)
+  const amountPenalty = Math.min(10, loanAmount / 100);
+  penalty += amountPenalty;
+  
+  // Apply penalty
+  const newScore = currentScore - penalty;
+  
+  // Clamp to minimum (0)
+  return Math.max(0, newScore);
+}
+
+/**
+ * Calculate recovery score after default
+ * Gradual recovery over time with good behavior
+ * 
+ * @param monthsSinceDefault - Months since the default
+ * @param repaidAmount - Amount that was repaid (percentage of original)
+ * @returns Recovery points to add
+ */
+export function calculateRecoveryScore(
+  monthsSinceDefault: number,
+  repaidAmount: number
+): number {
+  // Base recovery per month
+  let recovery = monthsSinceDefault * 2;
+  
+  // Bonus for full repayment
+  if (repaidAmount >= 100) {
+    recovery += 10;
+  }
+  
+  return recovery;
+}
+
+/**
+ * Check if agent is blacklisted
+ * 
+ * @param defaultCount - Number of defaults
+ * @param lastDefaultDate - Date of last default
+ * @returns Whether agent is blacklisted
+ */
+export function isBlacklisted(defaultCount: number, lastDefaultDate?: number): boolean {
+  // More than 3 defaults = blacklist
+  if (defaultCount > 3) {
+    return true;
+  }
+  
+  // Default within last 30 days
+  if (lastDefaultDate) {
+    const daysSince = (Date.now() - lastDefaultDate) / (1000 * 60 * 60 * 24);
+    if (daysSince < 30 && defaultCount > 0) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+/**
+ * Get default warning message
+ * 
+ * @param daysUntilDue - Days until loan is due
+ * @returns Warning message
+ */
+export function getDefaultWarning(daysUntilDue: number): string | null {
+  if (daysUntilDue <= 0) {
+    return '⚠️ LOAN IS OVERDUE! Repay immediately to avoid default.';
+  }
+  
+  if (daysUntilDue <= 3) {
+    return `⚠️ WARNING: ${daysUntilDue} days until due date!`;
+  }
+  
+  if (daysUntilDue <= 7) {
+    return `ℹ️ Reminder: ${daysUntilDue} days until loan is due.`;
+  }
+  
+  return null;
+}
+
 // Re-export types for convenience
 export * from './types';
+
+/**
+ * Generate ASCII progress bar for credit score
+ * 
+ * @param score - Credit score (0-100)
+ * @param width - Width of the bar (default 30)
+ * @returns ASCII progress bar string
+ */
+export function generateScoreBar(score: number, width: number = 30): string {
+  const filled = Math.round((score / 100) * width);
+  const empty = width - filled;
+  
+  // Choose color based on tier
+  let bar = '';
+  for (let i = 0; i < filled; i++) {
+    if (i < width * 0.2) bar += '█'; // Bronze
+    else if (i < width * 0.4) bar += '█'; // Silver
+    else if (i < width * 0.6) bar += '█'; // Gold
+    else if (i < width * 0.8) bar += '█'; // Platinum
+    else bar += '█'; // Diamond
+  }
+  
+  return `[${bar}${'░'.repeat(empty)}] ${score.toFixed(0)}`;
+}
+
+/**
+ * Generate factor breakdown visualization
+ * 
+ * @param factors - Score factors object
+ * @returns ASCII bar chart of factors
+ */
+export function visualizeFactors(factors: ScoreFactors): string {
+  const maxWidth = 20;
+  const result: string[] = [];
+  
+  result.push('\n┌─────────────────────────────┐');
+  result.push('│     Score Factor Breakdown   │');
+  result.push('├─────────────────────────────┤');
+  
+  // Helper to add factor bar
+  const addFactor = (name: string, value: number, max: number) => {
+    const barLen = Math.round((value / max) * maxWidth);
+    const bar = '█'.repeat(barLen);
+    const padded = name.padEnd(14);
+    result.push(`│ ${padded} │${bar.padEnd(maxWidth)}│ ${value.toFixed(1)}`);
+  };
+  
+  addFactor('Karma', factors.karmaScore, 40);
+  addFactor('Claimed', factors.claimedBonus, 15);
+  addFactor('Age', factors.ageBonus, 10);
+  addFactor('Activity', factors.activityBonus, 10);
+  addFactor('Diversity', factors.diversityBonus, 5);
+  addFactor('Followers', factors.followerBonus, 10);
+  addFactor('Owner', factors.ownerBonus, 10);
+  
+  if (factors.volatilityPenalty < 0) {
+    addFactor('Penalty', Math.abs(factors.volatilityPenalty), 20);
+  }
+  
+  result.push('└─────────────────────────────┘');
+  
+  return result.join('\n');
+}
+
+/**
+ * Generate tier progress visualization
+ * 
+ * @param currentTier - Current tier level (0-5)
+ * @param score - Current score
+ * @returns ASCII tier progression chart
+ */
+export function visualizeTiers(currentTier: number, score: number): string {
+  const tiers = ['Blocked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
+  const limits = [0, 50, 150, 300, 600, 1000];
+  const result: string[] = [];
+  
+  result.push('\n┌─────────────────────────────────────────────┐');
+  result.push('│              Credit Tier Progress            │');
+  result.push('├───────┬───────────┬────────────┬────────────┤');
+  result.push('│ Tier  │  Score    │  Max Borrow│   Status   │');
+  result.push('├───────┼───────────┼────────────┼────────────┤');
+  
+  for (let i = 0; i < tiers.length; i++) {
+    const isCurrent = i === currentTier;
+    const status = isCurrent ? '◀ CURRENT' : '';
+    const tierName = isCurrent ? `★${tiers[i]}` : ` ${tiers[i]}`;
+    const scoreRange = i === 0 ? '-' : `${i === 1 ? 1 : limits[i]}↑`;
+    const maxBorrow = limits[i];
+    
+    result.push(`│ ${tierName.padEnd(5)} │ ${String(limits[i]).padStart(3)}-100  │ $${String(maxBorrow).padEnd(10)} │ ${status.padEnd(10)}│`);
+  }
+  
+  result.push('└───────┴───────────┴────────────┴────────────┘');
+  
+  return result.join('\n');
+}
+
+/**
+ * Generate complete credit report visualization
+ * 
+ * @param name - Agent name
+ * @param creditScore - Credit score result
+ * @returns Formatted ASCII credit report
+ */
+export function generateCreditReport(name: string, creditScore: CreditScore): string {
+  const tierNames = ['Blocked', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond'];
+  const tier = tierNames[creditScore.tier];
+  
+  const report: string[] = [];
+  
+  // Header
+  report.push('');
+  report.push('╔═══════════════════════════════════════════╗');
+  report.push('║         💰 KARMA BANK CREDIT REPORT 💰     ║');
+  report.push('╠═══════════════════════════════════════════╣');
+  report.push(`║ Agent: ${name.padEnd(35)}║`);
+  report.push(`║ Score: ${creditScore.rawScore.toFixed(0).padEnd(36)}║`);
+  report.push(`║ Tier:  ${tier.padEnd(36)}║`);
+  report.push(`║ Max Borrow: $${creditScore.maxBorrow.toString().padEnd(32)}║`);
+  report.push('╠═══════════════════════════════════════════╣');
+  
+  // Score bar
+  report.push('║ Credit Score:                                   ║');
+  report.push(`║   ${generateScoreBar(creditScore.rawScore).padEnd(37)}║`);
+  
+  // Factors
+  report.push(visualizeFactors(creditScore.factors).replace(/^[┌┐]/g, '║').replace(/[└┘]/g, '║').replace(/├┤/g, '║║').replace(/─/g, ' '));
+  
+  // Footer
+  report.push(`║ Valid until: ${new Date(creditScore.expiresAt).toLocaleDateString().padEnd(29)}║`);
+  report.push('╚═══════════════════════════════════════════╝');
+  
+  return report.join('\n');
+}
