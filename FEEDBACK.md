@@ -147,6 +147,154 @@ const config = {
 
 ---
 
+## API Pool Implementation (v1.2.0)
+
+### REST API Endpoints
+
+The KarmaBank API Pool allows other agents to interact with the lending pool programmatically.
+
+**Pool Wallet:** `0xbfd8114ba3f8251e14057cea6ec99d8f1435194e` (ARC-TESTNET)
+
+#### Endpoints
+
+```bash
+# Pool Status
+GET /pool
+Response:
+{
+  "success": true,
+  "pool": {
+    "address": "0xbfd8114ba3f8251e14057cea6ec99d8f1435194e",
+    "chain": "ARC-TESTNET",
+    "balance": 10000,
+    "totalLoans": 5,
+    "totalVolume": 250,
+    "outstandingVolume": 150
+  }
+}
+
+# Register Agent
+POST /register
+Body: { "agentName": "@agent", "walletAddress": "0x..." }
+Response:
+{
+  "success": true,
+  "agent": {
+    "name": "@agent",
+    "score": 75,
+    "tier": "Gold",
+    "maxBorrow": 300,
+    "status": "active"
+  }
+}
+
+# Check Credit
+GET /credit/:name
+Response:
+{
+  "success": true,
+  "credit": {
+    "agentName": "@agent",
+    "score": 75,
+    "tier": "Gold",
+    "maxBorrow": 300,
+    "availableCredit": 250,
+    "outstanding": 50,
+    "activeLoans": 1
+  }
+}
+
+# Borrow USDC
+POST /borrow
+Body: { "agentName": "@agent", "amount": 50 }
+Response:
+{
+  "success": true,
+  "loan": {
+    "id": "loan-uuid",
+    "amount": 50,
+    "termDays": 14,
+    "dueDate": "2026-02-19",
+    "status": "active"
+  },
+  "transfer": {
+    "success": true,
+    "txHash": "0x..."
+  }
+}
+
+# Repay Loan
+POST /repay
+Body: { "agentName": "@agent", "loanId": "uuid", "txHash": "0x..." }
+Response:
+{
+  "success": true,
+  "loan": {
+    "id": "uuid",
+    "amount": 50,
+    "status": "repaid"
+  }
+}
+
+# Health Check
+GET /health
+Response: { "status": "healthy", "service": "karmabank-api" }
+```
+
+### Running the API Server
+
+```bash
+# Development mode
+npm run dev:api
+
+# Production mode
+npm run build
+npm run start:api
+
+# API will be available at http://localhost:3000
+```
+
+### Integration Example
+
+```javascript
+// Other agents can integrate with KarmaBank pool
+const KARMA_BANK_API = 'http://localhost:3000';
+
+// Register agent
+await fetch(`${KARMA_BANK_API}/register`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    agentName: '@otherAgent',
+    walletAddress: '0x...'
+  })
+});
+
+// Check credit
+const credit = await fetch(`${KARMA_BANK_API}/credit/@otherAgent`);
+
+// Borrow USDC
+await fetch(`${KARMA_BANK_API}/borrow`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    agentName: '@otherAgent',
+    amount: 50
+  })
+});
+```
+
+### API Pool Features
+
+- **Security Checks**: All borrow requests go through security validation (sybil detection, loan flipping prevention)
+- **Circle Integration**: Real USDC transfers on ARC-TESTNET
+- **CORS Enabled**: Other domains can interact with the API
+- **Error Handling**: Comprehensive error responses with recommendations
+- **Health Checks**: Monitor API status
+```
+
+---
+
 ## Implementation Priority
 
 | Priority | Feature | Effort | Status |
