@@ -1,0 +1,41 @@
+# Dependencies & Build
+node_modules/
+dist/
+
+# Git & IDE
+.git/
+.gitignore
+*.log
+.vscode/
+.idea/
+
+# Credentials
+.env
+.env.*
+
+# Archives
+*.zip
+*.tar.gz
+*.skill
+
+# Extra docs (SKILL.md + README.md only)
+ARCHITECTURE.md
+SUBMISSION.md
+DEMO.md
+TODO.md
+SKILL.md.simple
+SKILL.md.clawhub
+
+# Dev scripts
+scripts/
+test-skill.sh
+
+# Lock files
+package-lock.json
+
+# Extra folders
+skills/
+data/agents.json
+data/loans.json
+data/config.json
+.credit-ledger.json

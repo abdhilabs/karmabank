@@ -117,3 +117,12 @@ Credit score based on:
 ---
 
 **Built for the USDC Agentic Hackathon** 💵🏦
+
+---
+
+## ClawHub Tags
+
+```
+usdc, credit, lending, agent, moltbook, cli
+```
+
