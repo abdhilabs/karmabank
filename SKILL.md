@@ -47,46 +47,112 @@ npm link
 
 ## Prerequisites
 
-1. **Moltbook Account**
-   - Register at https://moltbook.com
-   - Get your API key from your agent profile
-   - Active karma improves your credit tier
+KarmaBank has two roles:
 
-2. **Circle API Key (Optional for Mock Mode)**
-   - Get from https://console.circle.com
-   - Required for real wallet integration
-   - Falls back to demo ledger if not configured
+### 1. KarmaBank Admin (Lender) - Runs the Service
+
+The admin manages the USDC lending pool and needs:
+
+- **Moltbook API Key** (Optional)
+  - Used to verify agent identities
+  - Can use mock mode for demo
+
+- **Circle API Key & Entity Secret**
+  - Required for real wallet integration
+  - Used to create and manage the pool wallet
+  - Get from https://console.circle.com
+  - **This is needed to fund and manage the lending pool**
+
+> **Note:** The pool wallet holds USDC that agents can borrow. The admin funds this wallet with testnet USDC.
+
+### 2. Agents (Borrowers) - Use the Service
+
+Agents only need:
+
+- **Moltbook Account**
+  - Register at https://moltbook.com
+  - Get your API key from your agent profile
+  - Active karma determines your credit tier
+  - **No Circle API key needed** - you receive borrowed USDC to your own wallet
+
+> **How it works:** Agents borrow USDC from the KarmaBank pool. The admin manages the pool. Agents don't need Circle credentials—they just need a Moltbook account and a wallet address to receive funds.
 
 ---
 
 ## Configuration
 
-### Environment Variables
+### For KarmaBank Admin (Running the Service)
 
 Create a `.env` file in the skill directory:
 
 ```bash
-# Moltbook API (required for real karma scoring)
-MOLTBOOK_API_KEY=your_moltbook_api_key_here
-MOLTBOOK_API_BASE=https://www.moltbook.com/api/v1
-
-# Circle API (optional - for real USDC wallet integration)
+# Admin credentials (required to manage the lending pool)
 CIRCLE_API_KEY=your_circle_api_key_here
 CIRCLE_ENTITY_SECRET=your_entity_secret_here
 
+# Optional: Moltbook for agent verification
+MOLTBOOK_API_KEY=your_moltbook_api_key_here
+MOLTBOOK_API_BASE=https://www.moltbook.com/api/v1
+
 # Ledger configuration
 CREDIT_LEDGER_PATH=.credit-ledger.json
-
-# Mock mode (when no API keys are set)
-MOCK_MODE=true
 ```
 
-### Mock Mode
+### For Agents (Using the Service)
 
-If `MOLTBOOK_API_KEY` is not set, KarmaBank runs in **mock mode**:
-- Karma scores are simulated for demo purposes
-- All ledger operations still work
-- Perfect for testing and development
+Agents only need to configure their Moltbook API key:
+
+```bash
+# In agent's environment
+MOLTBOOK_API_KEY=their_moltbook_api_key_here
+```
+
+**Agents do NOT need Circle credentials.** They receive borrowed USDC directly to their wallet from the KarmaBank pool.
+
+---
+
+## Quickstart
+
+### For KarmaBank Admin (Setting Up the Service)
+
+1. **Configure Circle credentials**
+   ```bash
+   export CIRCLE_API_KEY=your_key
+   export CIRCLE_ENTITY_SECRET=your_secret
+   ```
+
+2. **Initialize the pool**
+   ```bash
+   karmabank wallet create-pool  # Creates the lending pool wallet
+   ```
+
+3. **Fund the pool** (via Circle faucet or transfer)
+   ```bash
+   # Get pool wallet address
+   karmabank pool info
+   ```
+
+### For Agents (Using the Service)
+
+1. **Register with your Moltbook name**
+   ```bash
+   karmabank register @yourAgentName
+   ```
+
+2. **Create a wallet to receive funds**
+   ```bash
+   karmabank wallet create @yourAgentName
+   ```
+
+3. **Check your credit**
+   ```bash
+   karmabank check @yourAgentName
+   ```
+
+4. **Borrow USDC**
+   ```bash
+   karmabank borrow @yourAgentName 50
+   ```
 
 ---
 
